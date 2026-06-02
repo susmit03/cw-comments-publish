@@ -1,0 +1,167 @@
+bundle:
+  name: comments-sync-azure-devops
+
+sync:
+  paths:
+    - .
+    - ../shared
+
+variables:
+  dev_catalog:
+    default: cwc_dev
+  uat_catalog:
+    default: cwc_uat
+  prod_catalog:
+    default: cwc_prod
+  warehouse_id:
+    default: 37fad4f47a3e9919
+  workspace_url:
+    default: https://fevm-serverless-stable-69ija6.cloud.databricks.com/
+  allowed_schemas:
+    default: sales,finance
+  comments_source_dir:
+    description: YAML source directory in uploaded bundle files
+    default: ${workspace.file_path}/01-azure-devops/comments
+
+resources:
+  jobs:
+    comments_diff_uat:
+      name: comments-diff-uat
+      tasks:
+        - task_key: diff_uat
+          spark_python_task:
+            python_file: ${workspace.file_path}/01-azure-devops/dab_runner.py
+            parameters:
+              - --env
+              - uat
+              - --source-dir
+              - ${var.comments_source_dir}
+              - --dev-catalog
+              - ${var.dev_catalog}
+              - --uat-catalog
+              - ${var.uat_catalog}
+              - --prod-catalog
+              - ${var.prod_catalog}
+              - --warehouse-id
+              - ${var.warehouse_id}
+              - --workspace-url
+              - ${var.workspace_url}
+              - --allowed-schemas
+              - ${var.allowed_schemas}
+          environment_key: comments_env
+      environments:
+        - environment_key: comments_env
+          spec:
+            environment_version: "3"
+            dependencies:
+              - "databricks-sdk>=0.30.0"
+              - "pyyaml>=6.0"
+
+    comments_promote_uat:
+      name: comments-promote-uat
+      tasks:
+        - task_key: apply_uat
+          spark_python_task:
+            python_file: ${workspace.file_path}/01-azure-devops/dab_runner.py
+            parameters:
+              - --env
+              - uat
+              - --apply
+              - --source-dir
+              - ${var.comments_source_dir}
+              - --dev-catalog
+              - ${var.dev_catalog}
+              - --uat-catalog
+              - ${var.uat_catalog}
+              - --prod-catalog
+              - ${var.prod_catalog}
+              - --warehouse-id
+              - ${var.warehouse_id}
+              - --workspace-url
+              - ${var.workspace_url}
+              - --allowed-schemas
+              - ${var.allowed_schemas}
+          environment_key: comments_env
+      environments:
+        - environment_key: comments_env
+          spec:
+            environment_version: "3"
+            dependencies:
+              - "databricks-sdk>=0.30.0"
+              - "pyyaml>=6.0"
+
+    comments_diff_prod:
+      name: comments-diff-prod
+      tasks:
+        - task_key: diff_prod
+          spark_python_task:
+            python_file: ${workspace.file_path}/01-azure-devops/dab_runner.py
+            parameters:
+              - --env
+              - prod
+              - --source-dir
+              - ${var.comments_source_dir}
+              - --dev-catalog
+              - ${var.dev_catalog}
+              - --uat-catalog
+              - ${var.uat_catalog}
+              - --prod-catalog
+              - ${var.prod_catalog}
+              - --warehouse-id
+              - ${var.warehouse_id}
+              - --workspace-url
+              - ${var.workspace_url}
+              - --allowed-schemas
+              - ${var.allowed_schemas}
+          environment_key: comments_env
+      environments:
+        - environment_key: comments_env
+          spec:
+            environment_version: "3"
+            dependencies:
+              - "databricks-sdk>=0.30.0"
+              - "pyyaml>=6.0"
+
+    comments_promote_prod:
+      name: comments-promote-prod
+      tasks:
+        - task_key: apply_prod
+          spark_python_task:
+            python_file: ${workspace.file_path}/01-azure-devops/dab_runner.py
+            parameters:
+              - --env
+              - prod
+              - --apply
+              - --source-dir
+              - ${var.comments_source_dir}
+              - --dev-catalog
+              - ${var.dev_catalog}
+              - --uat-catalog
+              - ${var.uat_catalog}
+              - --prod-catalog
+              - ${var.prod_catalog}
+              - --warehouse-id
+              - ${var.warehouse_id}
+              - --workspace-url
+              - ${var.workspace_url}
+              - --allowed-schemas
+              - ${var.allowed_schemas}
+          environment_key: comments_env
+      environments:
+        - environment_key: comments_env
+          spec:
+            environment_version: "3"
+            dependencies:
+              - "databricks-sdk>=0.30.0"
+              - "pyyaml>=6.0"
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/bundles/${bundle.name}/${bundle.target}
+  prod:
+    mode: production
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/bundles/${bundle.name}/${bundle.target}

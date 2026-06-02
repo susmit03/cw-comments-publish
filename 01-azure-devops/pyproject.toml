@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "comments-sync"
+version = "0.1.0"
+description = "Git-PR-based promotion of UC comments from DEV through UAT to PROD"
+requires-python = ">=3.10"
+dependencies = [
+    "comments-core",
+    "click>=8.1",
+    "rich>=13.7",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "ruff>=0.4",
+]
+
+[project.scripts]
+comments-sync = "comments_sync.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["comments_sync*"]

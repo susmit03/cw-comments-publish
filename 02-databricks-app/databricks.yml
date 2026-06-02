@@ -1,0 +1,32 @@
+bundle:
+  name: comment-promotion-app
+
+variables:
+  dev_catalog:
+    description: DEV catalog name
+    default: cwc_dev
+  uat_catalog:
+    description: UAT catalog name
+    default: cwc_uat
+  prod_catalog:
+    description: PROD catalog name
+    default: cwc_prod
+  sql_warehouse_id:
+    description: SQL warehouse ID used by the app for all queries
+  audit_table:
+    description: Three-part Delta table name for audit rows
+    default: cwc_uat.audit.comment_promotions
+
+resources:
+  apps:
+    comment_promotion_app:
+      name: comment-promotion
+      description: Approve and apply UC comments DEV -> UAT -> PROD
+      source_code_path: ./
+
+targets:
+  dev:
+    mode: development
+    default: true
+  prod:
+    mode: production

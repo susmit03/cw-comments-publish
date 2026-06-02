@@ -1,0 +1,11 @@
+dev_catalog: cwc_dev
+uat_catalog: cwc_uat
+prod_catalog: cwc_prod
+
+warehouse_id: REPLACE_ME
+
+workspace_url: https://REPLACE_ME.cloud.databricks.com
+
+allowed_schemas:
+  - sales
+  - finance

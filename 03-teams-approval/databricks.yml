@@ -1,0 +1,42 @@
+bundle:
+  name: comment-promotion-teams
+
+variables:
+  notebook_repo_path:
+    description: Workspace path where this repo is synced.
+    default: /Workspace/Repos/${workspace.current_user.userName}/cw-comments-publish
+
+resources:
+  apps:
+    comment_promotion_teams_receiver:
+      name: comment-promotion-teams-receiver
+      description: Teams approval link receiver
+      source_code_path: ./webhook_receiver
+
+  jobs:
+    comment_promotion_detector:
+      name: comment-promotion-detector-teams
+      schedule:
+        quartz_cron_expression: "0 0 * * * ?"
+        timezone_id: UTC
+        pause_status: PAUSED
+      tasks:
+        - task_key: detect
+          spark_python_task:
+            python_file: ${var.notebook_repo_path}/03-teams-approval/detector_job.py
+          environment_key: detector_env
+      environments:
+        - environment_key: detector_env
+          spec:
+            dependencies:
+              - "requests>=2.31"
+              - "pyyaml>=6.0"
+              - "databricks-sdk>=0.30.0"
+              - "${var.notebook_repo_path}/shared"
+
+targets:
+  dev:
+    mode: development
+    default: true
+  prod:
+    mode: production

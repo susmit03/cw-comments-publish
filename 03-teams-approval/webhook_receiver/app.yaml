@@ -1,0 +1,21 @@
+command:
+  - uvicorn
+  - app:app
+  - --host=0.0.0.0
+  - --port=8000
+
+env:
+  - name: APPROVAL_SIGNING_SECRET
+    valueFrom: approval-signing-secret
+  - name: TEAMS_WEBHOOK_URL
+    valueFrom: teams-webhook-url
+  - name: TEAMS_STATUS_WEBHOOK_URL
+    valueFrom: teams-status-webhook-url
+  - name: DEV_CATALOG
+    valueFrom: dev-catalog
+  - name: UAT_CATALOG
+    valueFrom: uat-catalog
+  - name: PROD_CATALOG
+    valueFrom: prod-catalog
+  - name: DATABRICKS_WAREHOUSE_ID
+    valueFrom: sql-warehouse-id

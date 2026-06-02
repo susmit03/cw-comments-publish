@@ -1,0 +1,21 @@
+command:
+  - streamlit
+  - run
+  - app.py
+  - --server.address=0.0.0.0
+  - --server.port=8000
+  - --browser.gatherUsageStats=false
+
+env:
+  - name: STREAMLIT_BROWSER_GATHER_USAGE_STATS
+    value: "false"
+  - name: DEV_CATALOG
+    valueFrom: dev-catalog
+  - name: UAT_CATALOG
+    valueFrom: uat-catalog
+  - name: PROD_CATALOG
+    valueFrom: prod-catalog
+  - name: DATABRICKS_WAREHOUSE_ID
+    valueFrom: sql-warehouse-id
+  - name: AUDIT_TABLE
+    valueFrom: audit-table

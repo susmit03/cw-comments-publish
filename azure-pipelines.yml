@@ -1,0 +1,77 @@
+trigger:
+  branches:
+    include:
+      - main
+  tags:
+    include:
+      - release/*
+  paths:
+    include:
+      - 01-azure-devops/*
+      - shared/*
+      - azure-pipelines.yml
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - 01-azure-devops/*
+      - shared/*
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: PromoteUAT
+    displayName: Promote comments to UAT
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: promote_uat
+        steps:
+          - checkout: self
+          - bash: |
+              set -euo pipefail
+              curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+              databricks version
+            displayName: Install Databricks CLI
+          - bash: |
+              set -euo pipefail
+              cd 01-azure-devops
+              databricks bundle deploy -t dev --auto-approve
+              databricks bundle run comments_promote_uat -t dev
+            displayName: Deploy bundle and run UAT promotion
+            env:
+              DATABRICKS_HOST: $(DATABRICKS_HOST)
+              DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
+              DEV_CATALOG: $(DEV_CATALOG)
+              UAT_CATALOG: $(UAT_CATALOG)
+              PROD_CATALOG: $(PROD_CATALOG)
+              DATABRICKS_WAREHOUSE_ID: $(DATABRICKS_WAREHOUSE_ID)
+
+  - stage: PromotePROD
+    displayName: Promote comments to PROD
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/release/'))
+    jobs:
+      - job: promote_prod
+        steps:
+          - checkout: self
+          - bash: |
+              set -euo pipefail
+              curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+              databricks version
+            displayName: Install Databricks CLI
+          - bash: |
+              set -euo pipefail
+              cd 01-azure-devops
+              databricks bundle deploy -t dev --auto-approve
+              databricks bundle run comments_promote_prod -t dev
+            displayName: Deploy bundle and run PROD promotion
+            env:
+              DATABRICKS_HOST: $(DATABRICKS_HOST)
+              DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
+              DEV_CATALOG: $(DEV_CATALOG)
+              UAT_CATALOG: $(UAT_CATALOG)
+              PROD_CATALOG: $(PROD_CATALOG)
+              DATABRICKS_WAREHOUSE_ID: $(DATABRICKS_WAREHOUSE_ID)
