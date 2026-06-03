@@ -1,0 +1,8 @@
+schema: sales
+table: customers
+table_comment: Customer master table. SCD Type 1 (no history retained).
+columns:
+  customer_id: Primary key
+  email: Lowercased canonical email; unique within active rows
+  region: ISO 3166-1 alpha-2 country code
+  signup_date: Date the customer first registered

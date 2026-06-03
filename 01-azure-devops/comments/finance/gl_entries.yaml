@@ -1,0 +1,9 @@
+schema: finance
+table: gl_entries
+table_comment: General-ledger journal entries. Append-only, partition by posted_at date.
+columns:
+  account: GL account code, e.g. 4000-REVENUE
+  amount: Signed amount; debits positive, credits negative
+  entry_id: Surrogate key
+  posted_at: When the entry was posted, UTC
+  source_doc: Originating document reference

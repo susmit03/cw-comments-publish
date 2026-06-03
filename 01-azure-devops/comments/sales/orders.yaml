@@ -1,0 +1,9 @@
+schema: sales
+table: orders
+table_comment: Customer orders, one row per order_id. Refreshed every 15 minutes from the OLTP store.
+columns:
+  customer_id: FK to cwc_dev.sales.customers.customer_id
+  order_date: Date order was placed in the storefront timezone
+  order_id: Primary key, monotonically increasing
+  status: 'One of: pending, paid, shipped, delivered, refunded'
+  total_amount: Order total in USD, includes tax but not shipping
