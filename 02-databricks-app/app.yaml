@@ -9,13 +9,26 @@ command:
 env:
   - name: STREAMLIT_BROWSER_GATHER_USAGE_STATS
     value: "false"
-  - name: DEV_CATALOG
-    valueFrom: dev-catalog
-  - name: UAT_CATALOG
-    valueFrom: uat-catalog
-  - name: PROD_CATALOG
-    valueFrom: prod-catalog
+
+  # SQL warehouse is wired as an app resource (see databricks.yml) so the app's
+  # service principal is granted CAN USE automatically.
   - name: DATABRICKS_WAREHOUSE_ID
-    valueFrom: sql-warehouse-id
+    valueFrom: sql-warehouse
+
+  # Demo config: one catalog, three schemas (dev/uat/prod).
+  - name: DEV_CATALOG
+    value: "susmit_demo"
+  - name: UAT_CATALOG
+    value: "susmit_demo"
+  - name: PROD_CATALOG
+    value: "susmit_demo"
+  - name: DEV_SCHEMA
+    value: "cw_demo_dev"
+  - name: UAT_SCHEMA
+    value: "cw_demo_uat"
+  - name: PROD_SCHEMA
+    value: "cw_demo_prod"
+  - name: DEFAULT_TABLE
+    value: "demo_orders"
   - name: AUDIT_TABLE
-    valueFrom: audit-table
+    value: "susmit_demo.cw_demo_audit.comment_promotions"

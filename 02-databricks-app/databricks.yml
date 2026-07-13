@@ -2,31 +2,33 @@ bundle:
   name: comment-promotion-app
 
 variables:
-  dev_catalog:
-    description: DEV catalog name
-    default: cwc_dev
-  uat_catalog:
-    description: UAT catalog name
-    default: cwc_uat
-  prod_catalog:
-    description: PROD catalog name
-    default: cwc_prod
   sql_warehouse_id:
     description: SQL warehouse ID used by the app for all queries
-  audit_table:
-    description: Three-part Delta table name for audit rows
-    default: cwc_uat.audit.comment_promotions
+    default: 30753495d5d39cb1
 
 resources:
   apps:
     comment_promotion_app:
       name: comment-promotion
-      description: Approve and apply UC comments DEV -> UAT -> PROD
+      description: Approve and apply UC comments DEV -> UAT -> PROD (demo)
       source_code_path: ./
+      # On-behalf-of-user auth: the app acts as the signed-in user for all SQL.
+      user_api_scopes:
+        - sql
+      resources:
+        - name: sql-warehouse
+          description: Warehouse the app uses for all SQL
+          sql_warehouse:
+            id: ${var.sql_warehouse_id}
+            permission: CAN_USE
 
 targets:
   dev:
     mode: development
     default: true
+    workspace:
+      host: https://fevm-serverless-stable-0a20zk.cloud.databricks.com
   prod:
     mode: production
+    workspace:
+      host: https://fevm-serverless-stable-0a20zk.cloud.databricks.com

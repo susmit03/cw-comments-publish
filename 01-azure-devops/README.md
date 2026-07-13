@@ -31,6 +31,11 @@ flowchart LR
     Tag --> PRODJob[DAB job: comments_promote_prod]
 ```
 
+## E2E checklist (C&W walkthrough)
+
+For a step-by-step setup + full DEV → PR → UAT → tag → PROD test with
+checkboxes, use **[E2E_CHECKLIST.md](./E2E_CHECKLIST.md)**.
+
 ## Setup
 
 ```bash

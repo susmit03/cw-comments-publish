@@ -1,4 +1,7 @@
 streamlit>=1.37
-databricks-sdk>=0.30.0
+# Pin a modern SDK: the Apps base image preinstalls an old databricks-sdk
+# (0.33.0) that mis-parses the Statement Execution API response. >=0.30.0 alone
+# is satisfied by that old build, so pin higher to force an upgrade.
+databricks-sdk>=0.120
 pyyaml>=6.0
 pandas>=2.0
